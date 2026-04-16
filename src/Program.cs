@@ -37,8 +37,6 @@ if (response.Content == null || response.Content.Count == 0)
     throw new Exception("No choices in response");
 }
 
-// You can use print statements as follows for debugging, they'll be visible when running tests.
 Console.Error.WriteLine("Logs from your program will appear here!");
 
-// TODO: Uncomment the line below to pass the first stage
-// Console.Write(response.Content[0].Text);
+Console.Write(response.Content[0].Text);
