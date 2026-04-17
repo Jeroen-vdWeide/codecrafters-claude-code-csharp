@@ -28,8 +28,33 @@ var client = new ChatClient(
     options: new OpenAIClientOptions { Endpoint = new Uri(baseUrl) }
 );
 
+var chatCompletionOptions = new ChatCompletionOptions();
+
+chatCompletionOptions.Tools.Add(ChatTool.CreateFunctionTool(
+
+    "Read", "Read and return the contents of a file", BinaryData.FromString(@"{
+
+        ""type"": ""object"",
+
+        ""properties"": {
+
+            ""file_path"": {
+
+                ""type"": ""string"",
+
+                ""description"": ""The path to the file to read""
+
+            }
+
+        },
+
+        ""required"": [""file_path""]
+
+    }")));
+
 ChatCompletion response = client.CompleteChat(
-    [new UserChatMessage(prompt)]
+    messages: [new UserChatMessage(prompt)], 
+    options: chatCompletionOptions
 );
 
 if (response.Content == null || response.Content.Count == 0)
