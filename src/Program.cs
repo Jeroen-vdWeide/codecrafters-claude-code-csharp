@@ -1,3 +1,4 @@
+using CodeCrafters.ClaudeCode.src.Tools;
 using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
@@ -62,6 +63,19 @@ if (response.Content == null || response.Content.Count == 0)
     throw new Exception("No choices in response");
 }
 
-Console.Error.WriteLine("Logs from your program will appear here!");
-
-Console.Write(response.Content[0].Text);
+if (response.ToolCalls != null && response.ToolCalls.Count > 0) {
+  foreach (var toolCall in response.ToolCalls) {
+    if (toolCall.FunctionName == "Read") {
+      var readTool = new ReadTool();
+      readTool.ReadFileContents(toolCall);
+    }
+  }
+} 
+else if (response.Content != null && response.Content.Count > 0) 
+{
+  Console.Write(response.Content[0].Text);
+} 
+else 
+{
+  Console.WriteLine("No content or tool calls in response.");
+}
