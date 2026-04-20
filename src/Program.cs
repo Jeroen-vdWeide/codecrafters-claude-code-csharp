@@ -58,14 +58,11 @@ ChatCompletion response = client.CompleteChat(
     options: chatCompletionOptions
 );
 
-if (response.Content == null || response.Content.Count == 0)
-{
-    throw new Exception("No choices in response");
-}
-
 if (response.ToolCalls != null && response.ToolCalls.Count > 0) {
-  foreach (var toolCall in response.ToolCalls) {
-    if (toolCall.FunctionName == "Read") {
+  foreach (var toolCall in response.ToolCalls) 
+  {
+    if (toolCall.FunctionName == "Read") 
+    {
       var readTool = new ReadTool();
       readTool.ReadFileContents(toolCall);
     }
