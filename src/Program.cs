@@ -29,50 +29,39 @@ var client = new ChatClient(
     options: new OpenAIClientOptions { Endpoint = new Uri(baseUrl) }
 );
 
-var chatCompletionOptions = new ChatCompletionOptions();
+var options = new ChatCompletionOptions
+{
+    Tools = { ReadTool.Tool}
+};
 
-chatCompletionOptions.Tools.Add(ChatTool.CreateFunctionTool(
+List<ChatMessage> messages = [new UserChatMessage(prompt)];
 
-    "Read", "Read and return the contents of a file", BinaryData.FromString(@"{
+while (true)
+{
+    Console.Error.WriteLine(messages);
 
-        ""type"": ""object"",
+    ChatCompletion response = client.CompleteChat(messages, options);
 
-        ""properties"": {
+    Console.Error.WriteLine(response);
 
-            ""file_path"": {
+    messages.Add(ChatMessage.CreateAssistantMessage(response));
 
-                ""type"": ""string"",
-
-                ""description"": ""The path to the file to read""
-
-            }
-
-        },
-
-        ""required"": [""file_path""]
-
-    }")));
-
-ChatCompletion response = client.CompleteChat(
-    messages: [new UserChatMessage(prompt)], 
-    options: chatCompletionOptions
-);
-
-if (response.ToolCalls != null && response.ToolCalls.Count > 0) {
-  foreach (var toolCall in response.ToolCalls) 
-  {
-    if (toolCall.FunctionName == "Read") 
+    if (response.ToolCalls.Count == 0)
     {
-      var readTool = new ReadTool();
-      readTool.ReadFileContents(toolCall);
+        Console.Write(response.Content[0].Text);
+        break;
     }
-  }
-} 
-else if (response.Content != null && response.Content.Count > 0) 
-{
-  Console.Write(response.Content[0].Text);
-} 
-else 
-{
-  Console.WriteLine("No content or tool calls in response.");
+
+    foreach (var toolCall in response.ToolCalls) 
+    {
+        Console.Error.WriteLine(toolCall);
+
+        if (toolCall.FunctionName == ReadTool.Name) 
+        {
+            var content = ReadTool.ReadFileContents(toolCall);
+
+            var toolMessage = ChatMessage.CreateToolMessage(toolCall.Id, content);
+            messages.Add(toolMessage);
+        }
+    }
 }
