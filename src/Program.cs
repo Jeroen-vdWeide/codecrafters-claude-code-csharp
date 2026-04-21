@@ -31,7 +31,7 @@ var client = new ChatClient(
 
 var options = new ChatCompletionOptions
 {
-    Tools = { ReadTool.Tool}
+    Tools = { ReadTool.Tool, WriteTool.Tool}
 };
 
 List<ChatMessage> messages = [new UserChatMessage(prompt)];
@@ -52,10 +52,11 @@ while (true)
     {
         if (toolCall.FunctionName == ReadTool.Name) 
         {
-            var content = ReadTool.ReadFileContents(toolCall);
-
-            var toolMessage = ChatMessage.CreateToolMessage(toolCall.Id, content);
-            messages.Add(toolMessage);
+            ReadTool.ReadFileContents(messages, toolCall);
+        }
+        else if (toolCall.FunctionName == WriteTool.Name)
+        {
+            WriteTool.WriteToFile(messages, toolCall);
         }
     }
 }
