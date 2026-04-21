@@ -38,11 +38,7 @@ List<ChatMessage> messages = [new UserChatMessage(prompt)];
 
 while (true)
 {
-    Console.Error.WriteLine(messages);
-
     ChatCompletion response = client.CompleteChat(messages, options);
-
-    Console.Error.WriteLine(response);
 
     messages.Add(ChatMessage.CreateAssistantMessage(response));
 
@@ -54,8 +50,6 @@ while (true)
 
     foreach (var toolCall in response.ToolCalls) 
     {
-        Console.Error.WriteLine(toolCall);
-
         if (toolCall.FunctionName == ReadTool.Name) 
         {
             var content = ReadTool.ReadFileContents(toolCall);

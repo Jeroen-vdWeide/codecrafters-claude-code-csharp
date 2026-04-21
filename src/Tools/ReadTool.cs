@@ -27,7 +27,7 @@ public class ReadTool
         functionSchemaIsStrict: true,
         functionParameters: BinaryData.FromString(ReadToolParameters));
 
-    public static string ReadFileContents(ChatToolCall readToolCall)
+    public static void ReadFileContents(List<ChatMessage> messages, ChatToolCall readToolCall)
     {
         using var doc = JsonDocument.Parse(readToolCall.FunctionArguments);
         if (doc.RootElement.TryGetProperty("file_path", out var pathProp)) 
@@ -35,21 +35,11 @@ public class ReadTool
             var filePath = pathProp.GetString();
             if (!string.IsNullOrEmpty(filePath)) 
             {
-                return File.ReadAllText(filePath);
+                var content = File.ReadAllText(filePath);
+
+                var toolMessage = ChatMessage.CreateToolMessage(readToolCall.Id, content);
+                messages.Add(toolMessage);
             }
-
-            return string.Empty;
         }
-
-        return string.Empty;
-    }
-
-    public static string PrintFileContents(ChatToolCall readToolCall)
-    {
-        var content = ReadFileContents(readToolCall);
-
-        Console.WriteLine(content);
-
-        return content;
     }
 }
