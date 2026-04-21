@@ -35,7 +35,7 @@ public class ReadTool
             var filePath = pathProp.GetString();
             if (!string.IsNullOrEmpty(filePath)) 
             {
-                return filePath;
+                return File.ReadAllText(filePath);
             }
 
             return string.Empty;
@@ -46,10 +46,10 @@ public class ReadTool
 
     public static string PrintFileContents(ChatToolCall readToolCall)
     {
-        var filePath = ReadFileContents(readToolCall);
+        var content = ReadFileContents(readToolCall);
 
-        Console.WriteLine(File.ReadAllText(filePath));
+        Console.WriteLine(content);
 
-        return filePath;
+        return content;
     }
 }
