@@ -58,5 +58,9 @@ while (true)
         {
             WriteTool.WriteToFile(messages, toolCall);
         }
+        else if (toolCall.FunctionName == BashTool.Name)
+        {
+            BashTool.ExecuteCommand(messages, toolCall);
+        }
     }
 }
