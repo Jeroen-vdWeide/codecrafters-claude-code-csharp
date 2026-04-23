@@ -31,7 +31,7 @@ var client = new ChatClient(
 
 var options = new ChatCompletionOptions
 {
-    Tools = { ReadTool.Tool, WriteTool.Tool}
+    Tools = { ReadTool.Tool, WriteTool.Tool, BashTool.Tool}
 };
 
 List<ChatMessage> messages = [new UserChatMessage(prompt)];
